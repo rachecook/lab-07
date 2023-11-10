@@ -24,15 +24,22 @@ evals<-read.csv("data/evals.csv", row.names=1)
 1.  Visualize the distribution of `score` in the dataframe `evals`.
 
 ```{r viz-score}
-# add code here
+ggplot(data = evals, aes(x = score)) +
+  geom_histogram(binwidth = 1) +
+  labs(x = "student score", y = NULL)
+  
 ```
 
-*Add your other details and narratives here.*
+the student's score is skewed to the left. This tells me the students are generous and tend give a high score. This is expected as they aren't unbiased and probably want favor with teaching staff.
 
 2.  Visualize and describe the relationship between `score` and `bty_avg` using `geom_point()` to represent the data. 
 
 ```{r scatterplot}
-# add code here
+ggplot(data = evals, aes(x = score, y = bty_avg)) +
+  geom_point() +
+  geom_jitter()
+  labs(x = "students score",
+       y = "bty average")
 ```
 
 *Add your narrative and other details here.*
@@ -41,33 +48,40 @@ evals<-read.csv("data/evals.csv", row.names=1)
 
 1. Fit a linear model called `score_bty_fit` to predict average professor evaluation `score` from average beauty rating (`bty_avg`). Print the regression output using `tidy()`.
 
-```{r fit-score_bty_fit, eval = FALSE}
-# remove eval = FALSE from the code chunk options after filling in the blanks
+```{r fit-score_bty_fit}
 score_bty_fit <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(___ ~ ___, data = ___)
+  fit(log(score) ~ bty_avg, data = evals)
 ```
 
 ```{r tidy-score_bty_fit, eval = FALSE}
 # remove eval = FALSE from the code chunk options after filling in the blanks
-tidy(___)
+tidy(score_bty_fit)
 ```
+score^ = 1.34612249 + 0.01667404 x bty_avg
 
-*Add your linear model here. Don't worry too much about notation, you can use things like score-hat.*
 
 2. Plot the data again using `geom_jitter()`, and add the regression line.
 
 ```{r viz-score_bty_fit,eval=FALSE}
-# add your plot here. Hint, you can add the regression line using geom_smooth()
+ggplot(data = evals, aes(x = log(score), y = bty_avg)) +
+  geom_jitter(width = 0.1, height = 0.1) +
+  geom_smooth() +
+  labs(
+    title = "score_bty_fit",
+    x = "log(score)",
+    y = "bty_fit"
+  )
 ```
 
 3. Interpret the slope of the linear model in context of the data.
 
-*Add your interpretation here*
+0.01667404
 
 4. Interpret the intercept of the linear model in context of the data. Comment on whether or not the intercept makes sense in this context.
 
-*Add your interpretation here*
+1.34612249. 
+Yes if the students give a low average beauty rating it makes sense that their overall score might be low and unbiased.
 
 5. Determine the $R^2$ of the model and interpret it in the context of the data.
 
